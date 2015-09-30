@@ -11,18 +11,21 @@ const CUBE_SPACING = 5;
 class BoggleCube extends Component {
   static propTypes = {
     // The letter to display on the cube (will be 2 letters in the case of 'Qu')
-    letter: RP.string.isRequired
+    letter: RP.string.isRequired,
+
+    // True if the cube should display as "selected"
+    selected: RP.bool.isRequired
   }
 
   render() {
-    const { letter } = this.props;
+    const { letter, selected } = this.props;
 
     return (
       <div style={{
         width: CUBE_WIDTH,
         height: CUBE_WIDTH,
         boxSizing: 'border-box',
-        border: '1px solid #999',
+        border: selected ? '1px solid #fff' : '1px solid #999',
         borderRadius: 7,
         background: ('linear-gradient(to bottom, rgba(255,250,232,1) 0%, ' +
                      'rgba(166,163,151,1) 100%)'),
@@ -43,7 +46,17 @@ class BoggleCube extends Component {
           fontFamily: 'Arial Bold, sans-serif',
           fontWeight: 'bolder'
         }}>
-          {letter}
+          <div style={{
+            color: selected ? 'white' : 'black',
+            textShadow: selected ? (`
+              -1px -1px 0 black,
+              -1px  1px 0 black,
+               1px -1px 0 black,
+               1px  1px 0 black
+            `) : ''
+          }}>
+            {letter}
+          </div>
         </div>
       </div>
     );
@@ -107,7 +120,7 @@ class BogglePathSegment extends Component {
         <polygon
           transform={`${translation2} ${rotation} ${translation1} ${scaling}`}
           fill="white"
-          strokeWidth="0.01"
+          strokeWidth="0.015"
           stroke="black"
           points={`
             0.25,-0.05
@@ -189,6 +202,13 @@ class BoggleTray extends Component {
     const nRows = grid.length;
     const nCols = grid[0].length;
 
+    const selectedCells = path.reduce((res, [row, col]) => {
+      return {
+        ...res,
+        [`${row},${col}`]: true
+      }
+    }, {});
+
     return (
       <div style={{
         background: '#449',
@@ -203,8 +223,10 @@ class BoggleTray extends Component {
           return (
             <div key={`${rowIndex}`} style={{clear: 'both'}}>
               {row.map((letter, colIndex) => {
+                const key = `${rowIndex},${colIndex}`;
                 return <BoggleCube
-                          key={`${rowIndex},${colIndex}`}
+                          key={key}
+                          selected={selectedCells[key]}
                           letter={letter} />
               })}
             </div>
