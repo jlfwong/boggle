@@ -224,11 +224,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'Arial Bold, sans-serif',
-    fontWeight: 'bolder'
+    fontFamily: 'Arial Bold, sans-serif'
   },
   cubeText: {
     color: 'black',
+    textShadow: `
+      -1px -1px 0 white,
+      -1px  1px 0 white,
+       1px -1px 0 white,
+       1px  1px 0 white
+    `,
   },
   cubeTextSelected: {
     color: 'white',

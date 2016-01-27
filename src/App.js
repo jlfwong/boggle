@@ -72,12 +72,12 @@ export class App extends Component {
       this.setState({
         path: path
       });
-      setTimeout(this.tick, 100);
+      setTimeout(this.tick, 20);
     }
   }
 
   componentDidMount() {
-    setTimeout(this.tick, 100);
+    setTimeout(this.tick, 20);
   }
 
   render() {
