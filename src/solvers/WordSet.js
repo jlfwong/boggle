@@ -12,7 +12,7 @@
 
 class WordSet {
   constructor(data = {}) {
-    this.root = data;
+    this.root = decompressTrie(data);
   }
 
   add(word) {
@@ -26,7 +26,7 @@ class WordSet {
       }
       node = node[c];
     }
-    node['$'] = 1;
+    node[''] = 1;
   }
 
   has(word) {
@@ -38,7 +38,7 @@ class WordSet {
       }
       node = node[c];
     }
-    return node['$'] === 1;
+    return node[''] === 1;
   }
 
   hasWordWithPrefix(prefix) {
@@ -54,8 +54,53 @@ class WordSet {
   }
 
   toJSON() {
-    return this.root;
+    return compressTrie(this.root);
   }
-}
+};
+
+const compressTrie = (node) => {
+  if (node === 1) {
+    return node;
+  }
+
+  const ret = {};
+  for (let [key, child] of Object.entries(node)) {
+    if (child === 1) {
+      ret[key] = 1;
+    }
+
+    child = compressTrie(child);
+
+    const childKeys = Object.keys(child);
+    if (childKeys.length === 1 && child[childKeys[0]] === 1) {
+      ret[key + childKeys[0]] = 1;
+    } else {
+      ret[key] = child;
+    }
+  };
+
+  return ret;
+};
+
+const decompressTrie = (node) => {
+  if (node === 1) {
+    return 1;
+  }
+
+  const ret = {};
+  for (let [key, child] of Object.entries(node)) {
+    if (child === 1 && key !== '') {
+      let cur = ret;
+      for (var i = 0; i < key.length; i++) {
+        cur[key[i]] = {};
+        cur = cur[key[i]];
+      }
+      cur[''] = 1;
+    } else {
+      ret[key] = decompressTrie(child);
+    }
+  };
+  return ret;
+};
 
 export default WordSet;

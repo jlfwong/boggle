@@ -35,18 +35,22 @@ describe('WordSet', () => {
     const wordSet = new WordSet();
     wordSet.add("ab");
     wordSet.add("a");
+    wordSet.add("dag");
 
-    assert.equal(JSON.stringify(wordSet), '{"a":{"b":{"$":1},"$":1}}');
+    assert.equal(JSON.stringify(wordSet), '{"a":{"b":1,"":1},"dag":1}');
   });
+
 
   it('can be reconstructed', () => {
     const wordSet = new WordSet();
     wordSet.add("ab");
     wordSet.add("a");
+    wordSet.add("dag");
 
     const wordSet2 = new WordSet(wordSet.toJSON());
-    assert.isTrue(wordSet.has("ab"));
-    assert.isTrue(wordSet.has("a"));
-    assert.isFalse(wordSet.has("b"));
+    assert.isTrue(wordSet2.has("ab"));
+    assert.isTrue(wordSet2.has("a"));
+    assert.isTrue(wordSet2.has("dag"));
+    assert.isFalse(wordSet2.has("b"));
   });
 });
