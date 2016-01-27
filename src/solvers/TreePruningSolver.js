@@ -20,11 +20,7 @@ const TreePruningSolver = function*(grid, dictionary) {
     const height = grid.length;
     const width = grid[0].length;
 
-    const wordSet = new WordSet();
-
-    for (var word of dictionary) {
-      wordSet.add(word);
-    }
+    const wordSet = new WordSet(dictionary);
 
     for (var startR = 0; startR < height; startR++) {
       for (var startC = 0; startC < width; startC++) {
@@ -52,11 +48,11 @@ const TreePruningSolver = function*(grid, dictionary) {
 
           const candidateWord = prefix + grid[endR][endC];
 
+          yield [path, candidateWord, wordSet.has(candidateWord)];
+
           if (!wordSet.hasWordWithPrefix(candidateWord)) {
             continue;
           };
-
-          yield [path, candidateWord, wordSet.has(candidateWord)];
 
           const nextSeen = {
             ...seen,

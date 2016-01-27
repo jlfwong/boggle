@@ -2,7 +2,8 @@ import "babel-polyfill";
 
 import React, { Component } from 'react';
 import BoggleTray from './components/BoggleTray.js';
-import BruteForceSolver from './solvers/BruteForceSolver.js';
+import TreePruningSolver from './solvers/TreePruningSolver.js';
+import dict from 'json!./dict.json';
 
 const RP = React.PropTypes;
 
@@ -48,8 +49,6 @@ const randomGrid = () => {
   return ret;
 };
 
-const dictionary = [];  // TODO(jlfwong): Use a real wordlist
-
 export class App extends Component {
   constructor(props) {
     super();
@@ -59,7 +58,7 @@ export class App extends Component {
     this.state = {
       grid: grid,
       path: [],
-      solver: BruteForceSolver(grid, dictionary),
+      solver: TreePruningSolver(grid, dict),
     };
 
     this.tick = this.tick.bind(this);
@@ -69,15 +68,23 @@ export class App extends Component {
     const next = this.state.solver.next();
     if (!next.done) {
       const [path, candidateWord, wordIsInDictionary] = next.value;
+      // TODO(jlfwong): Remove words of length <= 2 from the word list
+      if (wordIsInDictionary && candidateWord.length > 2) {
+        console.log(candidateWord);
+      }
       this.setState({
         path: path
       });
-      setTimeout(this.tick, 20);
+      setTimeout(this.tick, 0);
+    } else {
+      this.setState({
+        path: []
+      });
     }
   }
 
   componentDidMount() {
-    setTimeout(this.tick, 20);
+    setTimeout(this.tick, 0);
   }
 
   render() {
