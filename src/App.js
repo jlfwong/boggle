@@ -1,3 +1,5 @@
+import "babel-polyfill";
+
 import React, { Component } from 'react';
 import BoggleTray from './components/BoggleTray.js';
 
