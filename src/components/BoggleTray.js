@@ -209,7 +209,8 @@ const styles = StyleSheet.create({
                   'rgba(166,163,151,1) 100%)'),
     margin: CUBE_SPACING / 2,
     padding: 1,
-    float: 'left'
+    float: 'left',
+    border: '1px solid white',
   },
   cubeSelected: {
     border: '1px solid #fff',
@@ -228,12 +229,6 @@ const styles = StyleSheet.create({
   },
   cubeText: {
     color: 'black',
-    textShadow: `
-      -1px -1px 0 white,
-      -1px  1px 0 white,
-       1px -1px 0 white,
-       1px  1px 0 white
-    `,
   },
   cubeTextSelected: {
     color: 'white',

@@ -75,7 +75,7 @@ export class App extends Component {
       this.setState({
         path: path
       });
-      setTimeout(this.tick, 0);
+      setTimeout(this.tick, 100);
     } else {
       this.setState({
         path: []
@@ -84,7 +84,7 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    setTimeout(this.tick, 0);
+    setTimeout(this.tick, 100);
   }
 
   render() {
