@@ -11,8 +11,8 @@
 // InternalNode :: {[key: String]: Node}
 
 class WordSet {
-  constructor() {
-    this.root = {};
+  constructor(data = {}) {
+    this.root = data;
   }
 
   add(word) {
@@ -51,6 +51,10 @@ class WordSet {
       node = node[c];
     }
     return true;
+  }
+
+  toJSON() {
+    return this.root;
   }
 }
 
