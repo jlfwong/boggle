@@ -59,6 +59,7 @@ export class App extends Component {
       grid: grid,
       path: [],
       solver: TreePruningSolver(grid, dict),
+      foundPaths: []
     };
 
     this.tick = this.tick.bind(this);
@@ -67,13 +68,15 @@ export class App extends Component {
   tick() {
     const next = this.state.solver.next();
     if (!next.done) {
+      let foundPaths = this.state.foundPaths;
       const [path, candidateWord, wordIsInDictionary] = next.value;
-      // TODO(jlfwong): Remove words of length <= 2 from the word list
-      if (wordIsInDictionary && candidateWord.length > 2) {
-        console.log(candidateWord);
+
+      if (wordIsInDictionary) {
+        foundPaths = [[path, candidateWord], ...foundPaths];
       }
       this.setState({
-        path: path
+        path: path,
+        foundPaths: foundPaths
       });
       setTimeout(this.tick, 100);
     } else {
@@ -88,11 +91,17 @@ export class App extends Component {
   }
 
   render() {
-    const {grid, path} = this.state;
+    const {grid, path, foundPaths} = this.state;
 
     return (
       <div style={{margin: 50}}>
         <BoggleTray grid={grid} path={path} />
+        {foundPaths.map(([foundPath, word]) => {
+          return <div key={foundPath.map(pos => pos.join(",")).join("-")}
+                    style={{marginTop: 50}}>
+            <BoggleTray grid={grid} path={foundPath} />
+          </div>
+        })}
       </div>
     );
   }
