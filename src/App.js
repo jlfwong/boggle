@@ -2,6 +2,7 @@ import "babel-polyfill";
 
 import React, { Component } from 'react';
 import BoggleTray from './components/BoggleTray.js';
+import BruteForceSolver from './solvers/BruteForceSolver.js';
 
 const RP = React.PropTypes;
 
@@ -47,17 +48,40 @@ const randomGrid = () => {
   return ret;
 };
 
+const dictionary = [];  // TODO(jlfwong): Use a real wordlist
+
 export class App extends Component {
-  render() {
+  constructor(props) {
+    super();
+
     const grid = randomGrid();
 
-    const path = [
-      [0, 0],
-      [0, 1],
-      [1, 0],
-      [1, 1],
-      [1, 2]
-    ];
+    this.state = {
+      grid: grid,
+      path: [],
+      solver: BruteForceSolver(grid, dictionary),
+    };
+
+    this.tick = this.tick.bind(this);
+  }
+
+  tick() {
+    const next = this.state.solver.next();
+    if (!next.done) {
+      const [path, candidateWord, wordIsInDictionary] = next.value;
+      this.setState({
+        path: path
+      });
+      setTimeout(this.tick, 100);
+    }
+  }
+
+  componentDidMount() {
+    setTimeout(this.tick, 100);
+  }
+
+  render() {
+    const {grid, path} = this.state;
 
     return (
       <div style={{margin: 50}}>

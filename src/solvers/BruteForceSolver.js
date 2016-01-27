@@ -1,7 +1,7 @@
 /**
  * Given
  *
- *  board :: [[letter: String, ...], ...]
+ *  grid :: [[letter: String, ...], ...]
  *  dictionary :: [word: String, ...]
  *
  * Yields
@@ -14,9 +14,9 @@
  *  candidateWord: String
  *  wordIsInDictionary: Boolean
  */
-const BruteForceSolver = function*(board, dictionary) {
-    const height = board.length;
-    const width = board[0].length;
+const BruteForceSolver = function*(grid, dictionary) {
+    const height = grid.length;
+    const width = grid[0].length;
 
     const wordIsInDictionary = {};
 
@@ -48,7 +48,7 @@ const BruteForceSolver = function*(board, dictionary) {
             continue;
           }
 
-          const candidateWord = prefix + board[endR][endC];
+          const candidateWord = prefix + grid[endR][endC];
 
           yield [path, candidateWord, wordIsInDictionary[candidateWord]];
 
@@ -57,7 +57,7 @@ const BruteForceSolver = function*(board, dictionary) {
             [`${endR},${endC}`]: true
           };
 
-          const nextPrefix = prefix + board[endR][endC];
+          const nextPrefix = prefix + grid[endR][endC];
 
           for (var dR = 1; dR >= -1; dR--) {
             for (var dC = 1; dC >= -1; dC--) {
