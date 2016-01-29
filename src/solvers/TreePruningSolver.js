@@ -48,11 +48,11 @@ const TreePruningSolver = function*(grid, dictionary) {
 
           const candidateWord = prefix + grid[endR][endC];
 
-          yield [path, candidateWord, wordSet.has(candidateWord)];
-
           if (!wordSet.hasWordWithPrefix(candidateWord)) {
             continue;
           };
+
+          yield [path, candidateWord, wordSet.has(candidateWord)];
 
           const nextSeen = {
             ...seen,

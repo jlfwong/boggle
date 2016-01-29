@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     margin: CUBE_SPACING / 2,
     padding: 1,
     float: 'left',
-    border: '1px solid white',
+    border: '1px solid #000',
   },
   cubeSelected: {
     border: '1px solid #fff',

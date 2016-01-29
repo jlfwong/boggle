@@ -78,7 +78,7 @@ export class App extends Component {
         path: path,
         foundPaths: foundPaths
       });
-      setTimeout(this.tick, 100);
+      requestAnimationFrame(this.tick);
     } else {
       this.setState({
         path: []
@@ -87,7 +87,7 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    setTimeout(this.tick, 100);
+    requestAnimationFrame(this.tick);
   }
 
   render() {
