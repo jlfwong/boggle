@@ -52,7 +52,7 @@ class BoggleSolverDisplay extends Component {
       }
       if (wordIsInDictionary) {
         // If the word is in the dictionary, pause 300ms per letter in the word
-        this.timeout = setTimeout(this.tick, 100 * candidateWord.length);
+        this.timeout = setTimeout(this.tick, 50);
 
         const wordCount = (this.state.wordCounts[candidateWord] || 0) + 1;
 

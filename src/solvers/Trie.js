@@ -31,7 +31,7 @@ class Trie {
     let node = this.root;
 
     for (let i = 0; i < word.length; i++) {
-      const c = word[i];
+      const c = word[i].toUpperCase();
       if (!node[c]) {
         node[c] = {};
       }
@@ -44,7 +44,7 @@ class Trie {
   hasWord(word) {
     let node = this.root;
     for (let i = 0; i < word.length; i++) {
-      const c = word[i];
+      const c = word[i].toUpperCase();
       if (!node[c]) {
         return false;
       }
@@ -56,7 +56,7 @@ class Trie {
   hasWordWithPrefix(prefix) {
     let node = this.root;
     for (let i = 0; i < prefix.length; i++) {
-      const c = prefix[i];
+      const c = prefix[i].toUpperCase();
       if (!node[c]) {
         return false;
       }
