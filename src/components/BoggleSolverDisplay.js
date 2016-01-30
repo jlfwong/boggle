@@ -107,7 +107,7 @@ class BoggleSolverDisplay extends Component {
     }, 0);
 
     return (
-      <div style={{margin: 50}}>
+      <div>
         <BoggleTray
           grid={grid}
           path={path}

@@ -77,7 +77,7 @@ export class App extends Component {
   render() {
     const { grid, solvers } = this.state;
 
-    return <div>
+    return <div className={css(styles.sideBySide)}>
       {solvers.map((solver, i) => {
         return (
           <div className={css(styles.solverDisplay)}>
@@ -93,6 +93,9 @@ export class App extends Component {
 };
 
 const styles = StyleSheet.create({
+  sideBySide: {
+    margin: 50,
+  },
   solverDisplay: {
     float: 'left',
     width: 200,
