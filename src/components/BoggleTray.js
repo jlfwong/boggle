@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, css } from '../../third_party/aphrodite';
+import { StyleSheet, css } from 'aphrodite';
 
 const RP = React.PropTypes;
 
