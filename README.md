@@ -1,6 +1,8 @@
 Boggle Solver
 =============
 
+[Boggle!](http://i.imgur.com/3V1WkcB.png)
+
 TODO
 
 - Move frequency based filtering to its own file
