@@ -1,4 +1,4 @@
-import TreePruningSolver from './TreePruningSolver.js';
+import DepthFirstTraversal from './DepthFirstTraversal.js';
 
 /**
  * Given
@@ -16,12 +16,12 @@ import TreePruningSolver from './TreePruningSolver.js';
  *  nextPrefix: String
  *  wordIsInDictionary: Boolean
  */
-const DictionaryListSolver = function*(grid, dictionary) {
+const DictionaryListTraversal = function*(grid, dictionary) {
   // DFS for each word in the list individually.
   for (let word of dictionary) {
-    yield* TreePruningSolver(grid,
+    yield* DepthFirstTraversal(grid,
             prefix => word.indexOf(prefix) === 0);
   }
 };
 
-export default DictionaryListSolver;
+export default DictionaryListTraversal;

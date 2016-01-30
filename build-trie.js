@@ -2,7 +2,7 @@ require("babel/register");
 
 const fs = require("fs");
 
-const Trie = require("./src/solvers/Trie.js");
+const Trie = require("./src/lib/Trie.js");
 
 const dict = fs.readFileSync(`${__dirname}/dict.txt`, 'utf-8').split('\n');
 

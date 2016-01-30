@@ -15,7 +15,7 @@
  *  nextPrefix: String
  *  wordIsInDictionary: Boolean
  */
-const TreePruningSolver = function*(grid, prefixIsValid) {
+const DepthFirstTraversal = function*(grid, prefixIsValid) {
     const height = grid.length;
     const width = grid[0].length;
 
@@ -75,4 +75,4 @@ const TreePruningSolver = function*(grid, prefixIsValid) {
     }
 };
 
-export default TreePruningSolver;
+export default DepthFirstTraversal;

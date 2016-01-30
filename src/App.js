@@ -4,13 +4,13 @@ import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
-import TreePruningSolver from './solvers/TreePruningSolver.js';
-import DictionaryListSolver from './solvers/DictionaryListSolver.js';
-import Trie from './solvers/Trie.js';
+import DepthFirstTraversal from './lib/DepthFirstTraversal.js';
+import DictionaryListTraversal from './lib/DictionaryListTraversal.js';
+import Trie from './lib/Trie.js';
 import dict from 'raw!./dict.txt';
 
-const NUM_ROWS = 4;
-const NUM_COLS = 4;
+const NUM_ROWS = 3;
+const NUM_COLS = 3;
 
 // From bananagrammer.com
 const ALL_CUBES = [
@@ -96,33 +96,33 @@ export class App extends Component {
 
     this.state = {
       grid: grid,
-      solvers: [
+      lib: [
         // Don't prune
-        TreePruningSolver(grid, prefix => true),
+        DepthFirstTraversal(grid, prefix => true),
 
         // Search for each word in the dictionary one-by-one
-        DictionaryListSolver(grid, dictionaryList),
+        DictionaryListTraversal(grid, dictionaryList),
 
         // Search for only words that have enough letters in the grid
-        DictionaryListSolver(grid, freqFilteredDictionaryList),
+        DictionaryListTraversal(grid, freqFilteredDictionaryList),
 
         // Prune by only allowing prefixes of words in the dictionary
-        TreePruningSolver(grid,
+        DepthFirstTraversal(grid,
           prefix => trie.hasWordWithPrefix(prefix)),
 
         // Prune by only allowing prefixes of words in the frequency filtered
         // dictionary
-        TreePruningSolver(grid,
+        DepthFirstTraversal(grid,
           prefix => freqFilteredTrie.hasWordWithPrefix(prefix)),
       ]
     };
   }
 
   render() {
-    const { grid, solvers } = this.state;
+    const { grid, lib } = this.state;
 
     return <div className={css(styles.sideBySide)}>
-      {solvers.map((solver, i) => {
+      {lib.map((solver, i) => {
         return (
           <div className={css(styles.solverDisplay)} key={i}>
             <BoggleSolverDisplay

@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 
-import TreePruningSolver from './TreePruningSolver.js';
+import DepthFirstTraversal from './DepthFirstTraversal.js';
 import Trie from './Trie.js';
 
 const generatorToArray = (generator) => {
@@ -12,11 +12,11 @@ const generatorToArray = (generator) => {
   return ret;
 };
 
-describe("TreePruningSolver", () => {
+describe("DepthFirstTraversal", () => {
   it("yields series of [path, candidateWord, wordIsInDictionary]", () => {
     const trie = new Trie().add("bad").add("cab");
 
-    const gen = TreePruningSolver(
+    const gen = DepthFirstTraversal(
       [["a", "b"],
        ["c", "d"]],
       prefix => trie.hasWordWithPrefix(prefix),

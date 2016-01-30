@@ -36,6 +36,7 @@ class BoggleSolverDisplay extends Component {
     this.state = {
       path: [],
       pathTracesWord: false,
+      foundPaths: {},
       foundWords: [],
       wordCounts: {}
     }
@@ -49,21 +50,34 @@ class BoggleSolverDisplay extends Component {
       const [path, candidateWord] = next.value;
       const wordIsInDictionary = isWord(candidateWord);
 
+
       const nextState = {
         path: path,
         pathTracesWord: wordIsInDictionary
       }
       if (wordIsInDictionary) {
-        // If the word is in the dictionary, pause 300ms per letter in the word
-        this.timeout = setTimeout(this.tick, 50);
+        // Some traversal methods end up traversing the same path multiple times.
+        // We're only interested in unique words though, so ignore the rest.
+        const pathKey = path.map(([r, c]) => `${r},${c}`).join("|");
 
-        const wordCount = (this.state.wordCounts[candidateWord] || 0) + 1;
+        if (!this.state.foundPaths[pathKey]) {
+          // If the word is in the dictionary, pause 300ms per letter in the
+          // word
+          this.timeout = setTimeout(this.tick, 50);
 
-        nextState.foundWords = [[candidateWord, path, wordCount]].concat(
-                                    this.state.foundWords);
-        nextState.wordCounts = {
-          ...this.state.wordCounts,
-          [candidateWord]: wordCount
+          const wordCount = (this.state.wordCounts[candidateWord] || 0) + 1;
+
+          nextState.foundWords = [[candidateWord, path, wordCount]].concat(
+                                      this.state.foundWords);
+          nextState.wordCounts = {
+            ...this.state.wordCounts,
+            [candidateWord]: wordCount
+          };
+
+          nextState.foundPaths = {
+            ...this.state.foundPaths,
+            [pathKey]: true
+          };
         };
       } else {
         this.timeout = setTimeout(this.tick, 50);
