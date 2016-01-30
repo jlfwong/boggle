@@ -1,7 +1,7 @@
 Boggle Solver
 =============
 
-[Boggle!](http://i.imgur.com/3V1WkcB.png)
+![Boggle!](http://i.imgur.com/3V1WkcB.png)
 
 TODO
 
