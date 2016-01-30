@@ -5,6 +5,7 @@ import { StyleSheet, css } from 'aphrodite';
 
 import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
 import TreePruningSolver from './solvers/TreePruningSolver.js';
+import DictionaryListSolver from './solvers/DictionaryListSolver.js';
 import Trie from './solvers/Trie.js';
 import dict from 'raw!./dict.txt';
 
@@ -53,21 +54,26 @@ export class App extends Component {
 
     const grid = randomGrid();
     const trie = new Trie();
+    const dictionaryList = [];
 
     for (let line of dict.split(/\s+/)) {
       trie.add(line);
+      dictionaryList.push(line);
     }
 
     this.state = {
       grid: grid,
       solvers: [
         // Don't prune
-        new TreePruningSolver(grid,
+        TreePruningSolver(grid,
           prefix => trie.hasWord(prefix),
           prefix => true),
 
+        // Search for each word in the dictionary one-by-one
+        DictionaryListSolver(grid, dictionaryList),
+
         // Prune by only allowing prefixes of words in the dictionary
-        new TreePruningSolver(grid,
+        TreePruningSolver(grid,
           prefix => trie.hasWord(prefix),
           prefix => trie.hasWordWithPrefix(prefix)),
       ]

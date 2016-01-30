@@ -7,7 +7,7 @@
  *
  * Yields
  *
- *  [path, candidateWord]
+ *  [path, candidateWord, wordIsInDictionary]
  *
  * Where
  *

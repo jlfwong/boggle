@@ -63,7 +63,7 @@ class BoggleSolverDisplay extends Component {
           [candidateWord]: wordCount
         };
       } else {
-        this.timeout = setTimeout(this.tick, 10);
+        this.timeout = setTimeout(this.tick, 50);
       }
       this.setState(nextState);
     } else {
