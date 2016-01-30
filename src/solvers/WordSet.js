@@ -27,6 +27,7 @@ class WordSet {
       node = node[c];
     }
     node[''] = 1;
+    return this;
   }
 
   has(word) {
@@ -64,20 +65,17 @@ const compressTrie = (node) => {
   }
 
   const ret = {};
+
   for (let [key, child] of Object.entries(node)) {
-    if (child === 1) {
-      ret[key] = 1;
-    }
-
-    child = compressTrie(child);
-
-    const childKeys = Object.keys(child);
-    if (childKeys.length === 1 && child[childKeys[0]] === 1) {
-      ret[key + childKeys[0]] = 1;
-    } else {
-      ret[key] = child;
-    }
-  };
+    let newKey = key;
+    let newChild = child;
+    while (Object.keys(newChild).length === 1) {
+      const childKey = Object.keys(newChild)[0];
+      newKey += childKey;
+      newChild = newChild[childKey];
+    };
+    ret[newKey] = compressTrie(newChild);
+  }
 
   return ret;
 };

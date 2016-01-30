@@ -1,8 +1,10 @@
 import "babel-polyfill";
 
 import React, { Component } from 'react';
+
 import BoggleTray from './components/BoggleTray.js';
 import TreePruningSolver from './solvers/TreePruningSolver.js';
+import WordSet from './solvers/WordSet.js';
 import dict from 'json!./dict.json';
 
 const RP = React.PropTypes;
@@ -58,8 +60,7 @@ export class App extends Component {
     this.state = {
       grid: grid,
       path: [],
-      solver: TreePruningSolver(grid, dict),
-      foundPaths: []
+      solver: TreePruningSolver(grid, new WordSet(dict)),
     };
 
     this.tick = this.tick.bind(this);
@@ -68,17 +69,18 @@ export class App extends Component {
   tick() {
     const next = this.state.solver.next();
     if (!next.done) {
-      let foundPaths = this.state.foundPaths;
       const [path, candidateWord, wordIsInDictionary] = next.value;
 
-      if (wordIsInDictionary) {
-        foundPaths = [[path, candidateWord], ...foundPaths];
-      }
       this.setState({
         path: path,
-        foundPaths: foundPaths
+        pathTracesWord: wordIsInDictionary
       });
-      requestAnimationFrame(this.tick);
+      if (wordIsInDictionary) {
+        // If the word is in the dictionary, pause 300ms per letter in the word
+        setTimeout(this.tick, 300 * candidateWord.length);
+      } else {
+        setTimeout(this.tick, 100);
+      }
     } else {
       this.setState({
         path: []
@@ -87,21 +89,18 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    requestAnimationFrame(this.tick);
+    this.tick();
   }
 
   render() {
-    const {grid, path, foundPaths} = this.state;
+    const {grid, path, pathTracesWord} = this.state;
 
     return (
       <div style={{margin: 50}}>
-        <BoggleTray grid={grid} path={path} />
-        {foundPaths.map(([foundPath, word]) => {
-          return <div key={foundPath.map(pos => pos.join(",")).join("-")}
-                    style={{marginTop: 50}}>
-            <BoggleTray grid={grid} path={foundPath} />
-          </div>
-        })}
+        <BoggleTray
+          grid={grid}
+          path={path}
+          pathTracesWord={pathTracesWord} />
       </div>
     );
   }

@@ -1,10 +1,8 @@
-import WordSet from './WordSet.js';
-
 /**
  * Given
  *
  *  grid :: [[letter: String, ...], ...]
- *  dictionary :: [word: String, ...]
+ *  wordSet :: WordSet
  *
  * Yields
  *
@@ -16,11 +14,9 @@ import WordSet from './WordSet.js';
  *  candidateWord: String
  *  wordIsInDictionary: Boolean
  */
-const TreePruningSolver = function*(grid, dictionary) {
+const TreePruningSolver = function*(grid, wordSet) {
     const height = grid.length;
     const width = grid[0].length;
-
-    const wordSet = new WordSet(dictionary);
 
     for (var startR = 0; startR < height; startR++) {
       for (var startC = 0; startC < width; startC++) {

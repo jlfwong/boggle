@@ -31,13 +31,24 @@ describe('WordSet', () => {
     assert.isFalse(wordSet.hasWordWithPrefix("c"));
   });
 
-  it('can be serialized', () => {
-    const wordSet = new WordSet();
-    wordSet.add("ab");
-    wordSet.add("a");
-    wordSet.add("dag");
+  it('serializes when compressed', () => {
+    const w1 = (
+      new WordSet()
+        .add("ab")
+        .add("a")
+        .add("dag"));
 
-    assert.equal(JSON.stringify(wordSet), '{"a":{"b":1,"":1},"dag":1}');
+    assert.equal(JSON.stringify(w1), '{"a":{"b":1,"":1},"dag":1}');
+
+    const w2 = (
+      new WordSet()
+        .add("abc")
+        .add("abd"));
+    // {a:{b:{c:1, d:1}}}
+    // 
+    // a -> b -> c
+    //        \-> d
+    assert.equal(JSON.stringify(w2), '{"ab":{"c":1,"d":1}}');
   });
 
 

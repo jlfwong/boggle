@@ -92,5 +92,10 @@ describe("BruteForceSolver", () => {
       "dcb",
       "dcba",
     ], results.map(x => x[1]));
+
+    assert.deepEqual([
+      "bad",
+      "cab"
+    ], results.filter(x => x[2]).map(x => x[1]));
   });
 });

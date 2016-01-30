@@ -15,17 +15,32 @@ class BoggleCube extends Component {
     letter: RP.string.isRequired,
 
     // True if the cube should display as "selected"
-    selected: RP.bool.isRequired
+    selected: RP.bool.isRequired,
+
+    position: RP.oneOf(["start", "middle", "end"]).isRequired
   }
 
   render() {
-    const { letter, selected } = this.props;
+    const { letter, partOfWord, position, selected } = this.props;
+
+    const cubeClassName = css(
+      styles.cube,
+      selected && styles.cubeSelected
+    );
+
+    const cubeTextClassName = css(
+      styles.cubeText,
+      selected && styles.cubeTextSelected,
+      {
+        "start": styles.cubeTextStart,
+        "end": styles.cubeTextEnd
+      }[position]
+    );
 
     return (
-      <div className={css(styles.cube, selected && styles.cubeSelected)}>
+      <div className={cubeClassName}>
         <div className={css(styles.cubeInner)}>
-          <div className={css(styles.cubeText,
-                              selected && styles.cubeTextSelected)}>
+          <div className={cubeTextClassName}>
             {letter}
           </div>
         </div>
@@ -42,11 +57,12 @@ class BogglePathSegment extends Component {
     srcRow: RP.number.isRequired,
     srcCol: RP.number.isRequired,
     dstRow: RP.number.isRequired,
-    dstCol: RP.number.isRequired
+    dstCol: RP.number.isRequired,
+    pathTracesWord: RP.bool.isRequired
   }
 
   render() {
-    const { srcRow, srcCol, dstRow, dstCol } = this.props;
+    const { srcRow, srcCol, dstRow, dstCol, pathTracesWord } = this.props;
 
     const centerX = (srcCol) => ((srcCol + 1/2) * CUBE_WIDTH +
                                  (CUBE_SPACING * srcCol - 1));
@@ -86,11 +102,13 @@ class BogglePathSegment extends Component {
     const translateY = centerY(srcRow);
     const translation2 = `translate(${translateX}, ${translateY})`;
 
+    const fillColor = pathTracesWord ? "#cfc" : "white";
+
     return (
       <g>
         <polygon
           transform={`${translation2} ${rotation} ${translation1} ${scaling}`}
-          fill="white"
+          fill={fillColor}
           strokeWidth="0.015"
           stroke="black"
           points={`
@@ -115,12 +133,15 @@ class BogglePath extends Component {
     // Number of rows in the Boggle grid
     nRows: RP.number.isRequired,
 
-    // Number of columsn in the Boggle grid
-    nCols: RP.number.isRequired
-  }
+    // Number of columns in the Boggle grid
+    nCols: RP.number.isRequired,
+
+    // True if the path traces a complete word
+    pathTracesWord: RP.bool.isRequired,
+  };
 
   render() {
-    const { path, nRows, nCols } = this.props;
+    const { path, nRows, nCols, pathTracesWord } = this.props;
 
     // Convert the coordinate list into a list of (source, destination) pairs
     // for each segment in the path.
@@ -141,7 +162,8 @@ class BogglePath extends Component {
                     srcRow={srcRow}
                     srcCol={srcCol}
                     dstRow={dstRow}
-                    dstCol={dstCol} />;
+                    dstCol={dstCol}
+                    pathTracesWord={pathTracesWord} />;
         })}
       </svg>
     );
@@ -159,21 +181,36 @@ class BoggleTray extends Component {
 
     // List of coordinates to trace on the grid to show how a word was
     // discovered. e.g. [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2]].
-    path: RP.arrayOf(RP.arrayOf(RP.number))
+    path: RP.arrayOf(RP.arrayOf(RP.number.isRequired).isRequired).isRequired,
+
+    // True if the path traces a full word.
+    pathTracesWord: RP.bool.isRequired,
   }
 
   render() {
-    const { grid, path } = this.props;
+    const { grid, path, pathTracesWord } = this.props;
 
     const nRows = grid.length;
     const nCols = grid[0].length;
 
-    const selectedCells = path.reduce((res, [row, col]) => {
-      return {
-        ...res,
-        [`${row},${col}`]: true
+    const selectedCells = {};
+    for (let [row, col] of path) {
+      selectedCells[`${row},${col}`] = true;
+    }
+
+    let startCellKey = path.length > 0 && `${path[0][0]},${path[0][1]}`;
+    let endCellKey = (path.length > 1 &&
+                      `${path[path.length-1][0]},${path[path.length-1][1]}`);
+
+    const position = (key) => {
+      if (key === startCellKey) {
+        return 'start';
+      } else if (key == endCellKey) {
+        return 'end';
+      } else {
+        return 'middle';
       }
-    }, {});
+    }
 
     return (
       <div className={css(styles.tray)} style={{
@@ -188,12 +225,19 @@ class BoggleTray extends Component {
                 return <BoggleCube
                           key={key}
                           selected={!!selectedCells[key]}
+                          position={position(key)}
                           letter={letter} />
               })}
             </div>
           )
         })}
-        {path && <BogglePath path={path} nRows={nRows} nCols={nCols} />}
+        {path &&
+          <BogglePath
+            path={path}
+            nRows={nRows}
+            nCols={nCols}
+            pathTracesWord={pathTracesWord}
+          />}
       </div>
     );
   }
@@ -214,6 +258,9 @@ const styles = StyleSheet.create({
   },
   cubeSelected: {
     border: '1px solid #fff',
+  },
+  cubePartOfWord: {
+    border: '1px solid #cfc',
   },
   cubeInner: {
     borderRadius: CUBE_WIDTH / 2,
@@ -238,6 +285,12 @@ const styles = StyleSheet.create({
        1px -1px 0 black,
        1px  1px 0 black
     `,
+  },
+  cubeTextStart: {
+    color: '#ccf',
+  },
+  cubeTextEnd: {
+    color: '#fcc',
   },
   path: {
     position: 'absolute',
