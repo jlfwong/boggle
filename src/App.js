@@ -1,6 +1,7 @@
 import "babel-polyfill";
 
 import React, { Component } from 'react';
+import { StyleSheet, css } from '../third_party/aphrodite';
 
 import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
 import TreePruningSolver from './solvers/TreePruningSolver.js';
@@ -76,15 +77,25 @@ export class App extends Component {
   render() {
     const { grid, solvers } = this.state;
 
-    return <div rel="wat">
+    return <div>
       {solvers.map((solver, i) => {
         return (
-          <BoggleSolverDisplay
-            key={i}
-            grid={grid}
-            solver={solver} />
+          <div className={css(styles.solverDisplay)}>
+            <BoggleSolverDisplay
+              key={i}
+              grid={grid}
+              solver={solver} />
+          </div>
         );
       })}
     </div>
   }
 };
+
+const styles = StyleSheet.create({
+  solverDisplay: {
+    float: 'left',
+    width: 200,
+  }
+});
+

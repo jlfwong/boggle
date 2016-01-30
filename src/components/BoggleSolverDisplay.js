@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
+import { StyleSheet, css } from '../../third_party/aphrodite';
 
 import BoggleTray from './BoggleTray.js';
 
 const RP = React.PropTypes;
 
+const scoreForWord = (word) => {
+  const length = word.length;
+  if (length < 5) return 1;
+  if (length === 5) return 2;
+  if (length === 6) return 3;
+  if (length === 7) return 5;
+  if (length === 8) return 11;
+};
+
 /**
  * Renders the progress of an animated solving
  * of a Boggle game.
  */
-
 class BoggleSolverDisplay extends Component {
   static propTypes = {
     // 2D grid of letters
@@ -24,7 +33,9 @@ class BoggleSolverDisplay extends Component {
 
     this.state = {
       path: [],
-      pathTracesWord: false
+      pathTracesWord: false,
+      foundWords: [],
+      wordCounts: {}
     }
   }
 
@@ -35,16 +46,26 @@ class BoggleSolverDisplay extends Component {
     if (!next.done) {
       const [path, candidateWord, wordIsInDictionary] = next.value;
 
-      this.setState({
+      const nextState = {
         path: path,
         pathTracesWord: wordIsInDictionary
-      });
+      }
       if (wordIsInDictionary) {
         // If the word is in the dictionary, pause 300ms per letter in the word
-        this.timeout = setTimeout(this.tick, 300 * candidateWord.length);
+        this.timeout = setTimeout(this.tick, 100 * candidateWord.length);
+
+        const wordCount = (this.state.wordCounts[candidateWord] || 0) + 1;
+
+        nextState.foundWords = [[candidateWord, path, wordCount]].concat(
+                                    this.state.foundWords);
+        nextState.wordCounts = {
+          ...this.state.wordCounts,
+          [candidateWord]: wordCount
+        };
       } else {
-        this.timeout = setTimeout(this.tick, 100);
+        this.timeout = setTimeout(this.tick, 10);
       }
+      this.setState(nextState);
     } else {
       this.setState({
         path: [],
@@ -63,9 +84,27 @@ class BoggleSolverDisplay extends Component {
     }
   }
 
+  handleWordMouseEnter(path) {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.setState({
+      path: path,
+      pathTracesWord: true
+    });
+  }
+
+  handleWordMouseLeave() {
+    this.tick();
+  }
+
   render() {
     const { grid } = this.props;
-    const { path, pathTracesWord } = this.state;
+    const { path, pathTracesWord, foundWords } = this.state;
+
+    const score = foundWords.reduce((accum, [word, ...rest]) => {
+      return accum + scoreForWord(word)
+    }, 0);
 
     return (
       <div style={{margin: 50}}>
@@ -73,9 +112,42 @@ class BoggleSolverDisplay extends Component {
           grid={grid}
           path={path}
           pathTracesWord={pathTracesWord} />
+
+        <div>
+          {`${score} points with ${foundWords.length} ` +
+           `word${foundWords.length != 2 ? 's' : ''}`}
+        </div>
+
+        <ul className={css(styles.foundWordBox)}>
+          {foundWords.map(([word, path, num]) => {
+            const text = word + (num > 1 ? ` (${num})` : '');
+            return (
+              <li
+                key={text}
+                className={css(styles.foundWord)}
+              >
+                <a
+                  href="javascript:void 0"
+                  onMouseEnter={this.handleWordMouseEnter.bind(this, path)}
+                  onMouseLeave={this.handleWordMouseLeave.bind(this)}
+                >
+                  {text}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  foundWordBox: {
+    height: 100,
+    width: 185,
+    overflow: 'scroll'
+  }
+});
 
 export default BoggleSolverDisplay;
