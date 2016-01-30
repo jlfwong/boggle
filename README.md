@@ -8,6 +8,8 @@ TODO
     http://exceptional-code.blogspot.com/2012/02/solving-boggle-game-recursion-prefix.html
 - Make BoggleSolverDisplay prettier
 - Trie visualization?
+- Dynamic programming visualization
+- Blog post
 
 Word list taken from 
 http://www.cs.duke.edu/courses/cps100/spring05/assign/boggle/
