@@ -38,7 +38,7 @@ describe('Trie', () => {
         .add("a")
         .add("dag"));
 
-    assert.equal(JSON.stringify(w1), '{"a":{"b":1,"":1},"dag":1}');
+    assert.equal(JSON.stringify(w1), '{"A":{"B":1,"":1},"DAG":1}');
 
     const w2 = (
       new Trie()
@@ -48,7 +48,7 @@ describe('Trie', () => {
     // 
     // a -> b -> c
     //        \-> d
-    assert.equal(JSON.stringify(w2), '{"ab":{"c":1,"d":1}}');
+    assert.equal(JSON.stringify(w2), '{"AB":{"C":1,"D":1}}');
   });
 
 

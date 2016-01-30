@@ -9,8 +9,8 @@ import DictionaryListSolver from './solvers/DictionaryListSolver.js';
 import Trie from './solvers/Trie.js';
 import dict from 'raw!./dict.txt';
 
-const NUM_ROWS = 3;
-const NUM_COLS = 3;
+const NUM_ROWS = 4;
+const NUM_COLS = 4;
 
 // From bananagrammer.com
 const ALL_CUBES = [
@@ -59,7 +59,7 @@ const randomGrid = () => {
 const freqCount = (word) => {
   const ret = {};
   for (let i = 0; i < word.length; i++) {
-    const c = word[i];
+    const c = word[i].toUpperCase();
     ret[c] = (ret[c] || 0) + 1;
   }
   return ret;
@@ -76,15 +76,16 @@ const isFreqSubset = (freq1, freq2) => {
   return true;
 };
 
+const dictionaryList = dict.split(/\s+/);
+const trie = Trie.fromDictionaryList(dictionaryList);
+
 export class App extends Component {
   constructor(props) {
     super();
 
     const grid = randomGrid();
-    const dictionaryList = dict.split(/\s+/);
-    const trie = Trie.fromDictionaryList(dictionaryList);
 
-    const gridFreq = freqCount(grid.join("").replace("Q"));
+    const gridFreq = freqCount(grid.join(""));
 
     const freqFilteredDictionaryList = dictionaryList.filter(word => {
       return isFreqSubset(freqCount(word), gridFreq);
@@ -97,9 +98,7 @@ export class App extends Component {
       grid: grid,
       solvers: [
         // Don't prune
-        TreePruningSolver(grid,
-          prefix => trie.hasWord(prefix),
-          prefix => true),
+        TreePruningSolver(grid, prefix => true),
 
         // Search for each word in the dictionary one-by-one
         DictionaryListSolver(grid, dictionaryList),
@@ -109,13 +108,11 @@ export class App extends Component {
 
         // Prune by only allowing prefixes of words in the dictionary
         TreePruningSolver(grid,
-          prefix => trie.hasWord(prefix),
           prefix => trie.hasWordWithPrefix(prefix)),
 
         // Prune by only allowing prefixes of words in the frequency filtered
         // dictionary
         TreePruningSolver(grid,
-          prefix => freqFilteredTrie.hasWord(prefix),
           prefix => freqFilteredTrie.hasWordWithPrefix(prefix)),
       ]
     };
@@ -127,8 +124,9 @@ export class App extends Component {
     return <div className={css(styles.sideBySide)}>
       {solvers.map((solver, i) => {
         return (
-          <div className={css(styles.solverDisplay)}>
+          <div className={css(styles.solverDisplay)} key={i}>
             <BoggleSolverDisplay
+              isWord={s => !!trie.hasWord(s)}
               key={i}
               grid={grid}
               solver={solver} />

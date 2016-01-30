@@ -19,33 +19,18 @@ describe("TreePruningSolver", () => {
     const gen = TreePruningSolver(
       [["a", "b"],
        ["c", "d"]],
-      prefix => trie.hasWord(prefix),
       prefix => trie.hasWordWithPrefix(prefix),
     );
 
     const results = generatorToArray(gen);
 
     assert.deepEqual([
-      "b",
-      "ba",
-      "bad",
-      "c",
-      "ca",
-      "cab",
-    ], results.map(x => x[1]));
-
-    assert.deepEqual([
-      "bad",
-      "cab"
-    ], results.filter(x => x[2]).map(x => x[1]));
-
-    assert.deepEqual([
-      "b",
-      "ba",
-      "bad",
-      "c",
-      "ca",
-      "cab",
+      "B",
+      "BA",
+      "BAD",
+      "C",
+      "CA",
+      "CAB",
     ], results.map(x => x[1]));
   });
 });

@@ -7,15 +7,15 @@
  *
  * Yields
  *
- *  [path, candidateWord, wordIsInDictionary]
+ *  [path, nextPrefix]
  *
  * Where
  *
  *  path :: [[row: Number, col: Number], ...]
- *  candidateWord: String
+ *  nextPrefix: String
  *  wordIsInDictionary: Boolean
  */
-const TreePruningSolver = function*(grid, prefixIsWord, prefixIsValid) {
+const TreePruningSolver = function*(grid, prefixIsValid) {
     const height = grid.length;
     const width = grid[0].length;
 
@@ -43,20 +43,18 @@ const TreePruningSolver = function*(grid, prefixIsWord, prefixIsValid) {
             continue;
           }
 
-          const candidateWord = prefix + grid[endR][endC];
+          const nextPrefix = prefix + grid[endR][endC].toUpperCase();
 
-          if (!prefixIsValid(candidateWord)) {
+          if (!prefixIsValid(nextPrefix)) {
             continue;
           };
 
-          yield [path, candidateWord, prefixIsWord(candidateWord)];
+          yield [path, nextPrefix];
 
           const nextSeen = {
             ...seen,
             [`${endR},${endC}`]: true
           };
-
-          const nextPrefix = prefix + grid[endR][endC];
 
           for (var dR = 1; dR >= -1; dR--) {
             for (var dC = 1; dC >= -1; dC--) {
