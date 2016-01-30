@@ -53,13 +53,8 @@ export class App extends Component {
     super();
 
     const grid = randomGrid();
-    const trie = new Trie();
-    const dictionaryList = [];
-
-    for (let line of dict.split(/\s+/)) {
-      trie.add(line);
-      dictionaryList.push(line);
-    }
+    const dictionaryList = dict.split(/\s+/);
+    const trie = Trie.fromDictionaryList(dictionaryList);
 
     this.state = {
       grid: grid,

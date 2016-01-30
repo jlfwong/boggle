@@ -18,6 +18,14 @@ class Trie {
     this.root = decompressTrie(data);
   }
 
+  static fromDictionaryList(dictionaryList) {
+    const trie = new Trie();
+    for (let word of dictionaryList) {
+      trie.add(word);
+    }
+    return trie;
+  }
+
   add(word) {
     let matchedLength = 0;
     let node = this.root;
