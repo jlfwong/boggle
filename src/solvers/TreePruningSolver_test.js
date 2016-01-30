@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 
 import TreePruningSolver from './TreePruningSolver.js';
-import WordSet from './WordSet.js';
+import Trie from './Trie.js';
 
 const generatorToArray = (generator) => {
   const ret = [];
@@ -14,12 +14,13 @@ const generatorToArray = (generator) => {
 
 describe("TreePruningSolver", () => {
   it("yields series of [path, candidateWord, wordIsInDictionary]", () => {
-    const dictionary = new WordSet().add("bad").add("cab");
+    const trie = new Trie().add("bad").add("cab");
 
     const gen = TreePruningSolver(
       [["a", "b"],
        ["c", "d"]],
-      dictionary
+      prefix => trie.hasWord(prefix),
+      prefix => trie.hasWordWithPrefix(prefix),
     );
 
     const results = generatorToArray(gen);

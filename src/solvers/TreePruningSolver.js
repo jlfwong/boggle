@@ -2,11 +2,12 @@
  * Given
  *
  *  grid :: [[letter: String, ...], ...]
- *  wordSet :: WordSet
+ *  prefixIsWord :: (prefix) => bool
+ *  prefixIsValid :: (prefix) => bool
  *
  * Yields
  *
- *  [path, candidateWord, wordIsInDictionary]
+ *  [path, candidateWord]
  *
  * Where
  *
@@ -14,7 +15,7 @@
  *  candidateWord: String
  *  wordIsInDictionary: Boolean
  */
-const TreePruningSolver = function*(grid, wordSet) {
+const TreePruningSolver = function*(grid, prefixIsWord, prefixIsValid) {
     const height = grid.length;
     const width = grid[0].length;
 
@@ -44,11 +45,11 @@ const TreePruningSolver = function*(grid, wordSet) {
 
           const candidateWord = prefix + grid[endR][endC];
 
-          if (!wordSet.hasWordWithPrefix(candidateWord)) {
+          if (!prefixIsValid(candidateWord)) {
             continue;
           };
 
-          yield [path, candidateWord, wordSet.has(candidateWord)];
+          yield [path, candidateWord, prefixIsWord(candidateWord)];
 
           const nextSeen = {
             ...seen,

@@ -2,15 +2,10 @@ import "babel-polyfill";
 
 import React, { Component } from 'react';
 
-import BoggleTray from './components/BoggleTray.js';
+import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
 import TreePruningSolver from './solvers/TreePruningSolver.js';
-import WordSet from './solvers/WordSet.js';
-import dict from 'json!./dict.json';
-
-const RP = React.PropTypes;
-
-const CUBE_WIDTH = 40;
-const CUBE_SPACING = 5;
+import Trie from './solvers/Trie.js';
+import dict from 'raw!./dict.txt';
 
 const NUM_ROWS = 4;
 const NUM_COLS = 4;
@@ -56,52 +51,40 @@ export class App extends Component {
     super();
 
     const grid = randomGrid();
+    const trie = new Trie();
+
+    for (let line of dict.split(/\s+/)) {
+      trie.add(line);
+    }
 
     this.state = {
       grid: grid,
-      path: [],
-      solver: TreePruningSolver(grid, new WordSet(dict)),
+      solvers: [
+        // Don't prune
+        new TreePruningSolver(grid,
+          prefix => trie.hasWord(prefix),
+          prefix => true),
+
+        // Prune by only allowing prefixes of words in the dictionary
+        new TreePruningSolver(grid,
+          prefix => trie.hasWord(prefix),
+          prefix => trie.hasWordWithPrefix(prefix)),
+      ]
     };
-
-    this.tick = this.tick.bind(this);
-  }
-
-  tick() {
-    const next = this.state.solver.next();
-    if (!next.done) {
-      const [path, candidateWord, wordIsInDictionary] = next.value;
-
-      this.setState({
-        path: path,
-        pathTracesWord: wordIsInDictionary
-      });
-      if (wordIsInDictionary) {
-        // If the word is in the dictionary, pause 300ms per letter in the word
-        setTimeout(this.tick, 300 * candidateWord.length);
-      } else {
-        setTimeout(this.tick, 100);
-      }
-    } else {
-      this.setState({
-        path: []
-      });
-    }
-  }
-
-  componentDidMount() {
-    this.tick();
   }
 
   render() {
-    const {grid, path, pathTracesWord} = this.state;
+    const { grid, solvers } = this.state;
 
-    return (
-      <div style={{margin: 50}}>
-        <BoggleTray
-          grid={grid}
-          path={path}
-          pathTracesWord={pathTracesWord} />
-      </div>
-    );
+    return <div rel="wat">
+      {solvers.map((solver, i) => {
+        return (
+          <BoggleSolverDisplay
+            key={i}
+            grid={grid}
+            solver={solver} />
+        );
+      })}
+    </div>
   }
 };

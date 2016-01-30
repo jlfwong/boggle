@@ -33,7 +33,7 @@ class Trie {
     return this;
   }
 
-  has(word) {
+  hasWord(word) {
     let node = this.root;
     for (let i = 0; i < word.length; i++) {
       const c = word[i];
