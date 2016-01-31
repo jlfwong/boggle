@@ -6,11 +6,12 @@ import { StyleSheet, css } from 'aphrodite';
 import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
 import BacktrackingPathGenerator from './lib/BacktrackingPathGenerator.js';
 import DictionaryListPathGenerator from './lib/DictionaryListPathGenerator.js';
+import filterDictionaryByFrequency from './lib/filterDictionaryByFrequency.js';
 import Trie from './lib/Trie.js';
 import dict from 'raw!./dict.txt';
 
-const NUM_ROWS = 3;
-const NUM_COLS = 3;
+const NUM_ROWS = 4;
+const NUM_COLS = 4;
 
 // From bananagrammer.com
 const ALL_CUBES = [
@@ -53,29 +54,6 @@ const randomGrid = () => {
   return ret;
 };
 
-// Return a map of letter to # of occurrences in word.
-// e.g.
-//  freqCount("apple") -> {"a": 1, "p": 2, "l": 1, "e": 1}
-const freqCount = (word) => {
-  const ret = {};
-  for (let i = 0; i < word.length; i++) {
-    const c = word[i].toUpperCase();
-    ret[c] = (ret[c] || 0) + 1;
-  }
-  return ret;
-};
-
-// Returns true if all the frequencies in freq1 are less than or equal to the
-// corresponding frequencies in freq2
-const isFreqSubset = (freq1, freq2) => {
-  for (let [key, val] in freq1) {
-    if (!freq2[key] || freq2[key] < val) {
-      return false;
-    }
-  }
-  return true;
-};
-
 const dictionaryList = dict.split(/\s+/);
 const trie = Trie.fromDictionaryList(dictionaryList);
 
@@ -85,11 +63,9 @@ export class App extends Component {
 
     const grid = randomGrid();
 
-    const gridFreq = freqCount(grid.join(""));
-
-    const freqFilteredDictionaryList = dictionaryList.filter(word => {
-      return isFreqSubset(freqCount(word), gridFreq);
-    });
+    const freqFilteredDictionaryList = filterDictionaryByFrequency(
+                                            grid,
+                                            dictionaryList);
 
     const freqFilteredTrie = Trie.fromDictionaryList(
                                 freqFilteredDictionaryList);
