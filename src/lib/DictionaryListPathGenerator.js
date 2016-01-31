@@ -1,4 +1,4 @@
-import DepthFirstTraversal from './DepthFirstTraversal.js';
+import BacktrackingPathGenerator from './BacktrackingPathGenerator.js';
 
 /**
  * Given
@@ -14,14 +14,13 @@ import DepthFirstTraversal from './DepthFirstTraversal.js';
  *
  *  path :: [[row: Number, col: Number], ...]
  *  nextPrefix: String
- *  wordIsInDictionary: Boolean
  */
-const DictionaryListTraversal = function*(grid, dictionary) {
+const DictionaryListPathGenerator = function*(grid, dictionary) {
   // DFS for each word in the list individually.
   for (let word of dictionary) {
-    yield* DepthFirstTraversal(grid,
+    yield* BacktrackingPathGenerator(grid,
             prefix => word.indexOf(prefix) === 0);
   }
 };
 
-export default DictionaryListTraversal;
+export default DictionaryListPathGenerator;

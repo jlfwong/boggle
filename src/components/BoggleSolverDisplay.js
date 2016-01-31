@@ -23,7 +23,7 @@ class BoggleSolverDisplay extends Component {
     // 2D grid of letters
     grid: RP.arrayOf(RP.arrayOf(RP.string)).isRequired,
 
-    solver: RP.object.isRequired,
+    pathGenerator: RP.object.isRequired,
 
     isWord: RP.func.isRequired,
   };
@@ -43,9 +43,9 @@ class BoggleSolverDisplay extends Component {
   }
 
   tick() {
-    const { solver, isWord } = this.props;
+    const { pathGenerator, isWord } = this.props;
 
-    const next = solver.next();
+    const next = pathGenerator.next();
     if (!next.done) {
       const [path, candidateWord] = next.value;
       const wordIsInDictionary = isWord(candidateWord);
