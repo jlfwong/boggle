@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  devtool: 'eval',
+  devtool: 'source-map',
   entry: [
     'webpack-hot-middleware/client',
     './src/index'
@@ -18,8 +18,12 @@ module.exports = {
   ],
   module: {
     loaders: [{
-      test: /\.js$/,
-      loaders: ['babel'],
+      test: /\.txt$/,
+      loaders: ['raw'],
+      include: path.join(__dirname, 'src')
+    }, {
+      test: /\.tsx?$/,
+      loaders: ['regenerator', 'ts'],
       include: path.join(__dirname, 'src')
     }]
   }

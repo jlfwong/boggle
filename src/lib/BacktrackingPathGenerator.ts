@@ -15,12 +15,17 @@
  *  nextPrefix: String
  *  wordIsInDictionary: Boolean
  */
-const BacktrackingPathGenerator = function*(grid, prefixIsValid) {
+
+ type Grid = Array<Array<String>>;
+
+ const BacktrackingPathGenerator = function*(grid: Grid,
+                                             prefixIsValid: (String) => boolean)
+ {
     const height = grid.length;
     const width = grid[0].length;
 
-    for (var startR = 0; startR < height; startR++) {
-      for (var startC = 0; startC < width; startC++) {
+    for (let startR = 0; startR < height; startR++) {
+      for (let startC = 0; startC < width; startC++) {
         const frontier = [
           {
             path: [[startR, startC]],
@@ -51,10 +56,11 @@ const BacktrackingPathGenerator = function*(grid, prefixIsValid) {
 
           yield [path, nextPrefix];
 
-          const nextSeen = {
-            ...seen,
-            [`${endR},${endC}`]: true
-          };
+          const nextSeen = {};
+          for (let key of Object.keys(seen)) {
+              nextSeen[key] = seen[key]
+          }
+          nextSeen[`${endR},${endC}`] = true;
 
           for (var dR = 1; dR >= -1; dR--) {
             for (var dC = 1; dC >= -1; dC--) {

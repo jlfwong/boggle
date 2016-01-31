@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
-import BacktrackingPathGenerator from './lib/BacktrackingPathGenerator.js';
+import BacktrackingPathGenerator from './lib/BacktrackingPathGenerator.ts';
 import DictionaryListPathGenerator from './lib/DictionaryListPathGenerator.js';
-import Trie from './lib/Trie.js';
+import Trie from './lib/Trie.ts';
+
 import dict from 'raw!./dict.txt';
 
 const NUM_ROWS = 3;
@@ -68,8 +69,8 @@ const freqCount = (word) => {
 // Returns true if all the frequencies in freq1 are less than or equal to the
 // corresponding frequencies in freq2
 const isFreqSubset = (freq1, freq2) => {
-  for (let [key, val] in freq1) {
-    if (!freq2[key] || freq2[key] < val) {
+  for (let key of Object.keys(freq1)) {
+    if (!freq2[key] || freq2[key] < freq1[key]) {
       return false;
     }
   }
@@ -77,7 +78,7 @@ const isFreqSubset = (freq1, freq2) => {
 };
 
 const dictionaryList = dict.split(/\s+/);
-const trie = Trie.fromDictionaryList(dictionaryList);
+const trie = new Trie(dictionaryList);
 
 export class App extends Component {
   constructor(props) {
@@ -91,8 +92,7 @@ export class App extends Component {
       return isFreqSubset(freqCount(word), gridFreq);
     });
 
-    const freqFilteredTrie = Trie.fromDictionaryList(
-                                freqFilteredDictionaryList);
+    const freqFilteredTrie = new Trie(freqFilteredDictionaryList);
 
     this.state = {
       grid: grid,
@@ -146,4 +146,3 @@ const styles = StyleSheet.create({
     width: 50 * NUM_COLS,
   }
 });
-

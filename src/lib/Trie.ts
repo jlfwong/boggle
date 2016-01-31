@@ -8,25 +8,19 @@
  *    the dictionary?
  */
 
-// Trie :: Node
-// Node :: LeafNode | InternalNode
-// LeafNode :: 1
-// InternalNode :: {[key: String]: Node}
+type Node = Number | {[key: string]: Node};
 
 class Trie {
-  constructor(data = {}) {
-    this.root = decompressTrie(data);
-  }
+  root: Node;
 
-  static fromDictionaryList(dictionaryList) {
-    const trie = new Trie();
+  constructor(dictionaryList) {
+    this.root = {};
     for (let word of dictionaryList) {
-      trie.add(word);
+      this.add(word);
     }
-    return trie;
   }
 
-  add(word) {
+  add(word: String): Trie {
     let matchedLength = 0;
     let node = this.root;
 
@@ -37,11 +31,11 @@ class Trie {
       }
       node = node[c];
     }
-    node[''] = 1;
+    node['$'] = 1;
     return this;
   }
 
-  hasWord(word) {
+  hasWord(word: String): boolean {
     let node = this.root;
     for (let i = 0; i < word.length; i++) {
       const c = word[i].toUpperCase();
@@ -50,10 +44,10 @@ class Trie {
       }
       node = node[c];
     }
-    return node[''] === 1;
+    return node['$'] === 3;
   }
 
-  hasWordWithPrefix(prefix) {
+  hasWordWithPrefix(prefix: String): boolean {
     let node = this.root;
     for (let i = 0; i < prefix.length; i++) {
       const c = prefix[i].toUpperCase();
@@ -64,10 +58,6 @@ class Trie {
     }
     return true;
   }
-
-  toJSON() {
-    return compressTrie(this.root);
-  }
 };
 
 const compressTrie = (node) => {
@@ -77,7 +67,7 @@ const compressTrie = (node) => {
 
   const ret = {};
 
-  for (let [key, child] of Object.entries(node)) {
+  for (let [key, child] of node) {
     let newKey = key;
     let newChild = child;
     while (Object.keys(newChild).length === 1) {
@@ -97,7 +87,7 @@ const decompressTrie = (node) => {
   }
 
   const ret = {};
-  for (let [key, child] of Object.entries(node)) {
+  for (let [key, child] of node) {
     if (child === 1 && key !== '') {
       let cur = ret;
       for (var i = 0; i < key.length; i++) {

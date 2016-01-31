@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 
-import BacktrackingPathGenerator from './BacktrackingPathGenerator.js';
+import BacktrackingPathGenerator from './BacktrackingPathGenerator.ts';
 import Trie from './Trie.js';
 
 const generatorToArray = (generator) => {

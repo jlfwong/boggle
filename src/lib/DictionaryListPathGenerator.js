@@ -1,4 +1,4 @@
-import BacktrackingPathGenerator from './BacktrackingPathGenerator.js';
+import BacktrackingPathGenerator from './BacktrackingPathGenerator.ts';
 
 /**
  * Given
