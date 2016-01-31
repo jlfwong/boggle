@@ -7,6 +7,7 @@ import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
 import BacktrackingPathGenerator from './lib/BacktrackingPathGenerator.js';
 import DictionaryListPathGenerator from './lib/DictionaryListPathGenerator.js';
 import filterDictionaryByFrequency from './lib/filterDictionaryByFrequency.js';
+import filterDictionaryByPossiblePaths from './lib/filterDictionaryByPossiblePaths.js';
 import Trie from './lib/Trie.js';
 import dict from 'raw!./dict.txt';
 
@@ -70,6 +71,17 @@ export class App extends Component {
     const freqFilteredTrie = Trie.fromDictionaryList(
                                 freqFilteredDictionaryList);
 
+    const pathFilteredDictionaryList = filterDictionaryByPossiblePaths(
+                                            grid,
+                                            dictionaryList);
+
+    const pathFilteredTrie = Trie.fromDictionaryList(
+                                pathFilteredDictionaryList);
+
+    console.log(dictionaryList.length,
+                freqFilteredDictionaryList.length,
+                pathFilteredDictionaryList.length);
+
     this.state = {
       grid: grid,
       pathGenerators: [
@@ -82,6 +94,9 @@ export class App extends Component {
         // Search for only words that have enough letters in the grid
         DictionaryListPathGenerator(grid, freqFilteredDictionaryList),
 
+        // Search for only words that have plausible paths in the grid
+        DictionaryListPathGenerator(grid, pathFilteredDictionaryList),
+
         // Prune by only allowing prefixes of words in the dictionary
         BacktrackingPathGenerator(grid,
           prefix => trie.hasWordWithPrefix(prefix)),
@@ -90,6 +105,11 @@ export class App extends Component {
         // dictionary
         BacktrackingPathGenerator(grid,
           prefix => freqFilteredTrie.hasWordWithPrefix(prefix)),
+
+        // Prune by only allowing prefixes of words in the path filtered
+        // dictionary
+        BacktrackingPathGenerator(grid,
+          prefix => pathFilteredTrie.hasWordWithPrefix(prefix)),
       ]
     };
   }

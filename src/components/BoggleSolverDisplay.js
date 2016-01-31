@@ -50,7 +50,6 @@ class BoggleSolverDisplay extends Component {
       const [path, candidateWord] = next.value;
       const wordIsInDictionary = isWord(candidateWord);
 
-
       const nextState = {
         path: path,
         pathTracesWord: wordIsInDictionary
@@ -61,10 +60,6 @@ class BoggleSolverDisplay extends Component {
         const pathKey = path.map(([r, c]) => `${r},${c}`).join("|");
 
         if (!this.state.foundPaths[pathKey]) {
-          // If the word is in the dictionary, pause 300ms per letter in the
-          // word
-          this.timeout = setTimeout(this.tick, 50);
-
           const wordCount = (this.state.wordCounts[candidateWord] || 0) + 1;
 
           nextState.foundWords = [[candidateWord, path, wordCount]].concat(
@@ -79,6 +74,8 @@ class BoggleSolverDisplay extends Component {
             [pathKey]: true
           };
         };
+
+        this.timeout = setTimeout(this.tick, 50);
       } else {
         this.timeout = setTimeout(this.tick, 50);
       }
