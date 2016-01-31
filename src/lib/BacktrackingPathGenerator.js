@@ -15,7 +15,7 @@
  *  nextPrefix: String
  *  wordIsInDictionary: Boolean
  */
-const DepthFirstTraversal = function*(grid, prefixIsValid) {
+const BacktrackingPathGenerator = function*(grid, prefixIsValid) {
     const height = grid.length;
     const width = grid[0].length;
 
@@ -75,4 +75,4 @@ const DepthFirstTraversal = function*(grid, prefixIsValid) {
     }
 };
 
-export default DepthFirstTraversal;
+export default BacktrackingPathGenerator;

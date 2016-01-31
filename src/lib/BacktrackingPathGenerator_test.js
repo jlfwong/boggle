@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 
-import DepthFirstTraversal from './DepthFirstTraversal.js';
+import BacktrackingPathGenerator from './BacktrackingPathGenerator.js';
 import Trie from './Trie.js';
 
 const generatorToArray = (generator) => {
@@ -12,11 +12,11 @@ const generatorToArray = (generator) => {
   return ret;
 };
 
-describe("DepthFirstTraversal", () => {
+describe("BacktrackingPathGenerator", () => {
   it("yields series of [path, candidateWord, wordIsInDictionary]", () => {
     const trie = new Trie().add("bad").add("cab");
 
-    const gen = DepthFirstTraversal(
+    const gen = BacktrackingPathGenerator(
       [["a", "b"],
        ["c", "d"]],
       prefix => trie.hasWordWithPrefix(prefix),

@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 import BoggleSolverDisplay from './components/BoggleSolverDisplay.js';
-import DepthFirstTraversal from './lib/DepthFirstTraversal.js';
-import DictionaryListTraversal from './lib/DictionaryListTraversal.js';
+import BacktrackingPathGenerator from './lib/BacktrackingPathGenerator.js';
+import DictionaryListPathGenerator from './lib/DictionaryListPathGenerator.js';
 import Trie from './lib/Trie.js';
 import dict from 'raw!./dict.txt';
 
@@ -96,40 +96,40 @@ export class App extends Component {
 
     this.state = {
       grid: grid,
-      lib: [
+      pathGenerators: [
         // Don't prune
-        DepthFirstTraversal(grid, prefix => true),
+        BacktrackingPathGenerator(grid, prefix => true),
 
         // Search for each word in the dictionary one-by-one
-        DictionaryListTraversal(grid, dictionaryList),
+        DictionaryListPathGenerator(grid, dictionaryList),
 
         // Search for only words that have enough letters in the grid
-        DictionaryListTraversal(grid, freqFilteredDictionaryList),
+        DictionaryListPathGenerator(grid, freqFilteredDictionaryList),
 
         // Prune by only allowing prefixes of words in the dictionary
-        DepthFirstTraversal(grid,
+        BacktrackingPathGenerator(grid,
           prefix => trie.hasWordWithPrefix(prefix)),
 
         // Prune by only allowing prefixes of words in the frequency filtered
         // dictionary
-        DepthFirstTraversal(grid,
+        BacktrackingPathGenerator(grid,
           prefix => freqFilteredTrie.hasWordWithPrefix(prefix)),
       ]
     };
   }
 
   render() {
-    const { grid, lib } = this.state;
+    const { grid, pathGenerators } = this.state;
 
     return <div className={css(styles.sideBySide)}>
-      {lib.map((solver, i) => {
+      {pathGenerators.map((pathGenerator, i) => {
         return (
           <div className={css(styles.solverDisplay)} key={i}>
             <BoggleSolverDisplay
               isWord={s => !!trie.hasWord(s)}
               key={i}
               grid={grid}
-              solver={solver} />
+              pathGenerator={pathGenerator} />
           </div>
         );
       })}
