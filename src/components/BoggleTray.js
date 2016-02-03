@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import PureComponent from 'react-pure-render/component';
 
 import BoggleCube from './BoggleCube.js';
 
@@ -13,7 +14,7 @@ const LargeBoggleCube = BoggleCube('LargeBoggleCube', CUBE_WIDTH, CUBE_SPACING);
 /**
  * An arrow between Boggle cubes.
  */
-class BogglePathSegment extends Component {
+class BogglePathSegment extends PureComponent {
   static propTypes = {
     srcRow: RP.number.isRequired,
     srcCol: RP.number.isRequired,
@@ -85,7 +86,7 @@ class BogglePathSegment extends Component {
   }
 }
 
-class BogglePath extends Component {
+class BogglePath extends PureComponent {
   static propTypes = {
     // List of coordinates to trace on the grid to show how a word was
     // discovered. e.g. [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2]].
@@ -135,7 +136,7 @@ class BogglePath extends Component {
  * Renders a tray of Boggle cubes, optionally including a path to trace on top
  * of them indicating where a word has been found or is being searched for.
  */
-class BoggleTray extends Component {
+class BoggleTray extends PureComponent {
   static propTypes = {
     // 2D grid of letters
     grid: RP.arrayOf(RP.arrayOf(RP.string)).isRequired,

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import PureComponent from 'react-pure-render/component';
 
 import BoggleTray from './BoggleTray.js';
 import BoggleCube from './BoggleCube.js';
@@ -17,11 +18,33 @@ const scoreForWord = (word) => {
   if (length === 8) return 11;
 };
 
+class FoundWord extends PureComponent {
+  static propTypes = {
+    word: RP.string.isRequired,
+    selected: RP.bool.isRequired,
+  };
+
+  render() {
+    const { word, selected } = this.props;
+
+    return <div className={css(styles.foundWord)}>
+      {word.split('').map((c, i) => {
+        return <SmallBoggleCube
+          key={i}
+          letter={c}
+          selected={selected}
+          selectedBorder={false}
+        />;
+      })}
+    </div>;
+  }
+};
+
 /**
  * Renders the progress of an animated solving
  * of a Boggle game.
  */
-class BoggleSolverDisplay extends Component {
+class BoggleSolverDisplay extends PureComponent {
   static propTypes = {
     // 2D grid of letters
     grid: RP.arrayOf(RP.arrayOf(RP.string)).isRequired,
@@ -45,53 +68,61 @@ class BoggleSolverDisplay extends Component {
       foundWords: [],
       wordCounts: {},
       hovering: false,
+      speed: 1,
     }
   }
 
   tick() {
     const { pathGenerator, isWord } = this.props;
+    const { speed } = this.state;
 
-    const next = pathGenerator.next();
-    if (!next.done) {
-      const [path, candidateWord] = next.value;
-      const wordIsInDictionary = isWord(candidateWord);
+    let nextState;
+    let next;
+    let curState = this.state;
 
-      const nextState = {
-        path: path,
-        pathTracesWord: wordIsInDictionary
-      }
-      if (wordIsInDictionary) {
-        // Some traversal methods end up traversing the same path multiple times.
-        // We're only interested in unique words though, so ignore the rest.
-        const pathKey = path.map(([r, c]) => `${r},${c}`).join("|");
+    for (let i = 0; i < speed; i++) {
+      next = pathGenerator.next();
+      if (!next.done) {
+        const [path, candidateWord] = next.value;
+        const wordIsInDictionary = isWord(candidateWord);
 
-        if (!this.state.foundPaths[pathKey]) {
-          const wordCount = (this.state.wordCounts[candidateWord] || 0) + 1;
+        nextState = {
+          ...curState,
+          path: path,
+          pathTracesWord: wordIsInDictionary
+        }
+        if (wordIsInDictionary) {
+          // Some traversal methods end up traversing the same path multiple times.
+          // We're only interested in unique words though, so ignore the rest.
+          const pathKey = path.map(([r, c]) => `${r},${c}`).join("|");
 
-          nextState.foundWords = [[candidateWord, path, wordCount]].concat(
-                                      this.state.foundWords);
-          nextState.wordCounts = {
-            ...this.state.wordCounts,
-            [candidateWord]: wordCount
+          if (!curState.foundPaths[pathKey]) {
+            const wordCount = (curState.wordCounts[candidateWord] || 0) + 1;
+
+            nextState.foundWords = [[candidateWord, path, wordCount]].concat(
+                                        curState.foundWords);
+            nextState.wordCounts = {
+              ...curState.wordCounts,
+              [candidateWord]: wordCount
+            };
+
+            nextState.foundPaths = {
+              ...curState.foundPaths,
+              [pathKey]: true
+            };
           };
-
-          nextState.foundPaths = {
-            ...this.state.foundPaths,
-            [pathKey]: true
-          };
-        };
-
-        this.timeout = setTimeout(this.tick, 50);
+        }
+        curState = nextState;
       } else {
-        this.timeout = setTimeout(this.tick, 50);
+        this.setState({
+          path: [],
+          pathTracesWord: false
+        });
+        return;
       }
-      this.setState(nextState);
-    } else {
-      this.setState({
-        path: [],
-        pathTracesWord: false
-      });
     }
+    this.setState(curState);
+    this.frameRequest = requestAnimationFrame(this.tick);
   }
 
   componentDidMount() {
@@ -99,14 +130,14 @@ class BoggleSolverDisplay extends Component {
   }
 
   componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
+    if (this.frameRequest) {
+      cancelAnimationFrame(this.frameRequest);
     }
   }
 
   handleWordMouseEnter(path) {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
+    if (this.frameRequest) {
+      cancelAnimationFrame(this.frameRequest);
     }
     this.setState({
       path: path,
@@ -150,18 +181,10 @@ class BoggleSolverDisplay extends Component {
               return (
                 <li
                   key={key}
-                  className={css(styles.foundWord)}
                   onMouseEnter={this.handleWordMouseEnter.bind(this, wordPath)}
                   onMouseLeave={this.handleWordMouseLeave.bind(this)}
                 >
-                  {word.split('').map((c, i) => {
-                    return <SmallBoggleCube
-                      key={i}
-                      letter={c}
-                      selected={selected}
-                      selectedBorder={false}
-                    />;
-                  })}
+                  <FoundWord word={word} selected={selected} />
                 </li>
               );
             })}

@@ -11,8 +11,8 @@ import filterDictionaryByPossiblePaths from './lib/filterDictionaryByPossiblePat
 import Trie from './lib/Trie.js';
 import dict from 'raw!./dict.txt';
 
-const NUM_ROWS = 10;
-const NUM_COLS = 10;
+const NUM_ROWS = 4;
+const NUM_COLS = 4;
 
 // From bananagrammer.com
 const ALL_CUBES = [
@@ -112,6 +112,8 @@ export class App extends Component {
         // dictionary
         BacktrackingPathGenerator(grid,
           prefix => pathFilteredTrie.hasWordWithPrefix(prefix)),
+        /*
+        */
       ]
     };
   }

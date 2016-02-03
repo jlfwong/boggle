@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import PureComponent from 'react-pure-render/component';
 
 const RP = React.PropTypes;
 
@@ -7,7 +8,7 @@ const BoggleCube = (name, CUBE_WIDTH, CUBE_SPACING) => {
   /**
    * Render a single boggle cube.
    */
-  class _Cube extends Component {
+  class _Cube extends PureComponent {
     static displayName = name
 
     static propTypes = {
