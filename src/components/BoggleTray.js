@@ -1,53 +1,14 @@
 import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
+import BoggleCube from './BoggleCube.js';
+
 const RP = React.PropTypes;
 
 const CUBE_WIDTH = 40;
 const CUBE_SPACING = 5;
 
-/**
- * Render a single boggle cube.
- */
-class BoggleCube extends Component {
-  static propTypes = {
-    // The letter to display on the cube (will be 2 letters in the case of 'Qu')
-    letter: RP.string.isRequired,
-
-    // True if the cube should display as "selected"
-    selected: RP.bool.isRequired,
-
-    position: RP.oneOf(["start", "middle", "end"]).isRequired
-  }
-
-  render() {
-    const { letter, partOfWord, position, selected } = this.props;
-
-    const cubeClassName = css(
-      styles.cube,
-      selected && styles.cubeSelected
-    );
-
-    const cubeTextClassName = css(
-      styles.cubeText,
-      selected && styles.cubeTextSelected,
-      {
-        "start": styles.cubeTextStart,
-        "end": styles.cubeTextEnd
-      }[position]
-    );
-
-    return (
-      <div className={cubeClassName}>
-        <div className={css(styles.cubeInner)}>
-          <div className={cubeTextClassName}>
-            {letter}
-          </div>
-        </div>
-      </div>
-    );
-  }
-};
+const LargeBoggleCube = BoggleCube('LargeBoggleCube', CUBE_WIDTH, CUBE_SPACING);
 
 /**
  * An arrow between Boggle cubes.
@@ -219,10 +180,10 @@ class BoggleTray extends Component {
       }}>
         {grid.map((row, rowIndex) => {
           return (
-            <div key={`${rowIndex}`} style={{clear: 'both'}}>
+            <div key={`${rowIndex}`} className={css(styles.row)}>
               {row.map((letter, colIndex) => {
                 const key = `${rowIndex},${colIndex}`;
-                return <BoggleCube
+                return <LargeBoggleCube
                           key={key}
                           selected={!!selectedCells[key]}
                           position={position(key)}
@@ -243,60 +204,18 @@ class BoggleTray extends Component {
   }
 };
 
+BoggleTray.CUBE_WIDTH = CUBE_WIDTH;
+BoggleTray.CUBE_SPACING = CUBE_SPACING;
+
 const styles = StyleSheet.create({
-  cube: {
-    width: CUBE_WIDTH,
-    height: CUBE_WIDTH,
-    boxSizing: 'border-box',
-    borderRadius: 7,
-    background: ('linear-gradient(to bottom, rgba(255,250,232,1) 0%, ' +
-                  'rgba(166,163,151,1) 100%)'),
-    margin: CUBE_SPACING / 2,
-    padding: 1,
-    float: 'left',
-    border: '1px solid #000',
-  },
-  cubeSelected: {
-    border: '1px solid #fff',
-  },
-  cubePartOfWord: {
-    border: '1px solid #cfc',
-  },
-  cubeInner: {
-    borderRadius: CUBE_WIDTH / 2,
-    width: CUBE_WIDTH - 4,
-    height: CUBE_WIDTH - 4,
-    boxShadow: '0 0 1px #E1DFCC',
-    boxSizing: 'border-box',
-    background: '#E1DFCC',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontFamily: 'Arial Bold, sans-serif'
-  },
-  cubeText: {
-    color: 'black',
-  },
-  cubeTextSelected: {
-    color: 'white',
-    textShadow: `
-      -1px -1px 0 black,
-      -1px  1px 0 black,
-       1px -1px 0 black,
-       1px  1px 0 black
-    `,
-  },
-  cubeTextStart: {
-    color: '#ccf',
-  },
-  cubeTextEnd: {
-    color: '#fcc',
-  },
   path: {
     position: 'absolute',
     left: CUBE_SPACING,
     top: CUBE_SPACING,
     zIndex: 100,
+  },
+  row: {
+    display: 'flex',
   },
   tray: {
     background: '#449',

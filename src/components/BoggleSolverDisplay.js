@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 import BoggleTray from './BoggleTray.js';
+import BoggleCube from './BoggleCube.js';
+
+const SmallBoggleCube = BoggleCube('SmallBoggleCube', 30, 2);
 
 const RP = React.PropTypes;
 
@@ -26,6 +29,8 @@ class BoggleSolverDisplay extends Component {
     pathGenerator: RP.object.isRequired,
 
     isWord: RP.func.isRequired,
+
+    size: RP.number.isRequired,
   };
 
   constructor(props) {
@@ -38,7 +43,8 @@ class BoggleSolverDisplay extends Component {
       pathTracesWord: false,
       foundPaths: {},
       foundWords: [],
-      wordCounts: {}
+      wordCounts: {},
+      hovering: false,
     }
   }
 
@@ -104,64 +110,94 @@ class BoggleSolverDisplay extends Component {
     }
     this.setState({
       path: path,
-      pathTracesWord: true
+      pathTracesWord: true,
+      hovering: true,
     });
   }
 
   handleWordMouseLeave() {
+    this.setState({hovering: false});
     this.tick();
   }
 
   render() {
-    const { grid } = this.props;
-    const { path, pathTracesWord, foundWords } = this.state;
+    const { grid, size } = this.props;
+    const { path, pathTracesWord, foundWords, hovering } = this.state;
 
-    const score = foundWords.reduce((accum, [word, ...rest]) => {
-      return accum + scoreForWord(word)
-    }, 0);
+    const height = (BoggleTray.CUBE_WIDTH * size +
+                    BoggleTray.CUBE_SPACING * (size + 1));
 
     return (
-      <div>
-        <BoggleTray
-          grid={grid}
-          path={path}
-          pathTracesWord={pathTracesWord} />
-
-        <div>
-          {`${score} points with ${foundWords.length} ` +
-           `word${foundWords.length != 2 ? 's' : ''}`}
+      <div className={css(styles.container)}>
+        <div className={css(styles.trayContainer)}>
+          <BoggleTray
+            grid={grid}
+            path={path}
+            pathTracesWord={pathTracesWord} />
         </div>
 
-        <ul className={css(styles.foundWordBox)}>
-          {foundWords.map(([word, path, num]) => {
-            const text = word + (num > 1 ? ` (${num})` : '');
-            return (
-              <li
-                key={text}
-                className={css(styles.foundWord)}
-              >
-                <a
-                  href="javascript:void 0"
-                  onMouseEnter={this.handleWordMouseEnter.bind(this, path)}
+        <div className={css(styles.rightColumn)} style={{height}}>
+          <div className={css(styles.wordCounter)}>
+            {`Words Found: ${foundWords.length} `}
+          </div>
+
+          <ul className={css(styles.foundWordBox)}>
+            {foundWords.map(([word, wordPath, num]) => {
+              const key = word + (num > 1 ? ` (${num})` : '');
+
+              const selected = hovering && (path === wordPath);
+
+              return (
+                <li
+                  key={key}
+                  className={css(styles.foundWord)}
+                  onMouseEnter={this.handleWordMouseEnter.bind(this, wordPath)}
                   onMouseLeave={this.handleWordMouseLeave.bind(this)}
                 >
-                  {text}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+                  {word.split('').map((c, i) => {
+                    return <SmallBoggleCube
+                      key={i}
+                      letter={c}
+                      selected={selected}
+                      selectedBorder={false}
+                    />;
+                  })}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    fontFamily: 'Helvetica',
+    fontVariant: 'small-caps',
+  },
+  trayContainer: {
+    float: 'left'
+  },
+  wordCounter: {
+    marginBottom: 10,
+    textDecoration: 'underline'
+  },
+  rightColumn: {
+    marginLeft: 10,
+    width: 300,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  foundWord: {
+    display: 'flex',
+  },
   foundWordBox: {
-    height: 100,
-    width: 185,
-    overflow: 'scroll'
-  }
+    overflow: 'scroll',
+  },
 });
 
 export default BoggleSolverDisplay;
