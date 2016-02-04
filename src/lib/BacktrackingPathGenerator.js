@@ -2,7 +2,6 @@
  * Given
  *
  *  grid :: [[letter: String, ...], ...]
- *  prefixIsWord :: (prefix) => bool
  *  prefixIsValid :: (prefix) => bool
  *
  * Yields
@@ -13,7 +12,6 @@
  *
  *  path :: [[row: Number, col: Number], ...]
  *  nextPrefix: String
- *  wordIsInDictionary: Boolean
  */
 const BacktrackingPathGenerator = function*(grid, prefixIsValid) {
     const height = grid.length;

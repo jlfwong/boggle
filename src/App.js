@@ -55,7 +55,7 @@ const randomGrid = () => {
   return ret;
 };
 
-const dictionaryList = dict.split(/\s+/);
+const dictionaryList = dict.split(/\s+/).filter(x => x.length > 0);
 const trie = Trie.fromDictionaryList(dictionaryList);
 
 export class App extends Component {
