@@ -7,6 +7,13 @@
  * http://exceptional-code.blogspot.com/2012/02/solving-boggle-game-recursion-prefix.html
  */
 const getDynamicProgrammingTable = (grid, word) => {
+  // The fact that "Qu" is a single tile somewhat complicates matters, so we'll
+  // only compare the first letter of each tile, and we'll replace sequences
+  // of "QU" in the word with just "Q". This is safe because all words in the
+  // dictionary starting with a "Q" also start with "QU" (e.g. "QI" is not in
+  // the dictionary).
+  word = word.replace("QU", "Q");
+
   const d = [];
 
   const height = grid.length;
@@ -19,7 +26,7 @@ const getDynamicProgrammingTable = (grid, word) => {
       for (let c = 0; c < width; c++) {
         let dCell = false;
 
-        if (grid[r][c] === word[i]) {
+        if (grid[r][c][0] === word[i]) {
           if (i === 0) {
             dCell = true;
           } else {

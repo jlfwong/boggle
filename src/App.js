@@ -11,8 +11,8 @@ import filterDictionaryByPossiblePaths from './lib/filterDictionaryByPossiblePat
 import Trie from './lib/Trie.js';
 import dict from 'raw!./dict.txt';
 
-const NUM_ROWS = 4;
-const NUM_COLS = 4;
+const NUM_ROWS = 3;
+const NUM_COLS = 3;
 
 // From bananagrammer.com
 const ALL_CUBES = [
@@ -85,7 +85,6 @@ export class App extends Component {
     this.state = {
       grid: grid,
       pathGenerators: [
-        /*
         // Don't prune
         BacktrackingPathGenerator(grid, prefix => true),
 
@@ -106,7 +105,6 @@ export class App extends Component {
         // dictionary
         BacktrackingPathGenerator(grid,
           prefix => freqFilteredTrie.hasWordWithPrefix(prefix)),
-        */
 
         // Prune by only allowing prefixes of words in the path filtered
         // dictionary

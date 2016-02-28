@@ -24,7 +24,7 @@ const wordHasPossiblePathInGrid = (grid, word) => {
 
   for (let r = 0; r < height; r++) {
     for (let c = 0; c < width; c++) {
-      if (d[word.length - 1][r][c]) {
+      if (d[d.length - 1][r][c]) {
         return true;
       }
     }

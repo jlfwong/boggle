@@ -27,5 +27,14 @@ describe("filterDictionaryByPossiblePaths", () => {
       "bc",
       "ac",
     ]));
+
+    assert.deepEqual([
+      "QUO",
+    ],
+    filterDictionaryByPossiblePaths([
+      ["Qu", "O"]
+    ], [
+      "QUO"
+    ]));
   });
 });

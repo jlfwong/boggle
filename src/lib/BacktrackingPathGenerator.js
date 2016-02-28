@@ -44,11 +44,11 @@ const BacktrackingPathGenerator = function*(grid, prefixIsValid) {
 
       const nextPrefix = prefix + grid[endR][endC].toUpperCase();
 
-      yield [path, nextPrefix];
-
       if (!prefixIsValid(nextPrefix)) {
         continue;
       };
+
+      yield [path, nextPrefix];
 
       const nextSeen = {
         ...seen,
